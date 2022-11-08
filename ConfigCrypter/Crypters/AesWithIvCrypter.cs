@@ -13,24 +13,33 @@ namespace DevAttic.ConfigCrypter.Crypters
         protected readonly Aes Aes;
         protected readonly Encoding Encoding;
 
-        protected AesWithIvCrypter(string secretKey, Encoding encoding = null)
+        protected AesWithIvCrypter(string secretKey, Encoding encoding = null) : this(secretKey, encoding, null)
         {
-            Encoding = encoding ?? Encoding.UTF8;
-            Aes = Aes.Create();
-            Aes.Mode = CipherMode.CFB;
-            Aes.Padding = PaddingMode.PKCS7;
-            Aes.Key = FitKeyLength(Encoding.GetBytes(secretKey), KeySize256Bit);
-            Aes.GenerateIV();
         }
 
-        public AesWithIvCrypter(string secretKey, string iv, Encoding encoding = null)
+        public AesWithIvCrypter(string secretKey, string iv, Encoding encoding = null) : this(secretKey, encoding, iv)
+        {
+            if (string.IsNullOrWhiteSpace(iv))
+            {
+                throw new ArgumentException("iv can't not be null or empty or whitespace either", nameof(iv));
+            }
+        }
+
+        private AesWithIvCrypter(string secretKey, Encoding encoding = null, string iv = null)
         {
             Encoding = encoding ?? Encoding.UTF8;
             Aes = Aes.Create();
             Aes.Mode = CipherMode.CFB;
             Aes.Padding = PaddingMode.PKCS7;
             Aes.Key = FitKeyLength(Encoding.GetBytes(secretKey), KeySize256Bit);
-            Aes.IV = FitIvLength(Encoding.GetBytes(iv));
+            if (string.IsNullOrWhiteSpace(iv))
+            {
+                Aes.GenerateIV();
+            }
+            else
+            {
+                Aes.IV = FitIvLength(Encoding.GetBytes(iv));
+            }
         }
 
         public void Dispose()
