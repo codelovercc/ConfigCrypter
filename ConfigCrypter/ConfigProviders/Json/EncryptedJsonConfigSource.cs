@@ -16,6 +16,12 @@ namespace DevAttic.ConfigCrypter.ConfigProviders.Json
         /// A certificate loader instance. Custom loaders can be used.
         /// </summary>
         public ICertificateLoader CertificateLoader { get; set; }
+
+        /// <summary>
+        /// 证书原始内容
+        /// </summary>
+        public byte[] CertificateRawData { get; set; }
+
         /// <summary>
         /// The fully qualified path of the certificate.
         /// </summary>

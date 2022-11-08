@@ -103,11 +103,16 @@ namespace DevAttic.ConfigCrypter.Extensions
             {
                 config.CertificateLoader = new StoreCertificateLoader(config.CertificateSubjectName);
             }
+            else if (config.CertificateRawData?.Any() == true)
+            {
+                config.CertificateLoader =
+                    new RawDataCertificateLoader(config.CertificateRawData, config.CertificatePassword);
+            }
 
             if (config.CertificateLoader == null)
             {
                 throw new InvalidOperationException(
-                    "Either CertificatePath or CertificateSubjectName has to be provided if CertificateLoader has not been set manually.");
+                    "Either CertificatePath or CertificateSubjectName or CertificateRawData has to be provided if CertificateLoader has not been set manually.");
             }
 
             if (string.IsNullOrEmpty(config.Path))
