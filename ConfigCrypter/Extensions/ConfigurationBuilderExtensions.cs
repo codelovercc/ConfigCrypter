@@ -3,6 +3,7 @@ using DevAttic.ConfigCrypter.ConfigProviders.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Linq;
 
 namespace DevAttic.ConfigCrypter.Extensions
 {
@@ -37,7 +38,8 @@ namespace DevAttic.ConfigCrypter.Extensions
         /// <param name="hostEnvironment">The current host environment. Used to add environment specific appsettings files. (appsettings.Development.json, appsettings.Production.json)</param>
         /// <returns>The current ConfigurationBuilder instance.</returns>
         public static IConfigurationBuilder AddEncryptedAppSettings(
-            this IConfigurationBuilder builder, IHostEnvironment hostEnvironment, Action<EncryptedJsonConfigSource> configAction)
+            this IConfigurationBuilder builder, IHostEnvironment hostEnvironment,
+            Action<EncryptedJsonConfigSource> configAction)
         {
             if (builder is null)
             {
@@ -45,7 +47,8 @@ namespace DevAttic.ConfigCrypter.Extensions
             }
 
             var appSettingSource = new EncryptedJsonConfigSource { Path = "appsettings.json" };
-            var environmentSource = new EncryptedJsonConfigSource { Path = $"appsettings.{hostEnvironment.EnvironmentName}.json", Optional = true };
+            var environmentSource = new EncryptedJsonConfigSource
+                { Path = $"appsettings.{hostEnvironment.EnvironmentName}.json", Optional = true };
             configAction?.Invoke(appSettingSource);
             configAction?.Invoke(environmentSource);
 
@@ -62,7 +65,7 @@ namespace DevAttic.ConfigCrypter.Extensions
         /// <param name="configAction">An action used to configure the configuration source.</param>
         /// <returns>The current ConfigurationBuilder instance.</returns>
         public static IConfigurationBuilder AddEncryptedJsonConfig(
-                    this IConfigurationBuilder builder, Action<EncryptedJsonConfigSource> configAction)
+            this IConfigurationBuilder builder, Action<EncryptedJsonConfigSource> configAction)
 
         {
             if (builder is null)
@@ -85,7 +88,8 @@ namespace DevAttic.ConfigCrypter.Extensions
         /// <param name="builder">A ConfigurationBuilder instance.</param>
         /// <param name="configSource">The fully configured config source.</param>
         /// <returns>The current ConfigurationBuilder instance.</returns>
-        public static IConfigurationBuilder AddEncryptedJsonConfig(this IConfigurationBuilder builder, EncryptedJsonConfigSource configSource)
+        public static IConfigurationBuilder AddEncryptedJsonConfig(this IConfigurationBuilder builder,
+            EncryptedJsonConfigSource configSource)
         {
             InitializeCertificateLoader(configSource);
             builder.Add(configSource);
@@ -95,24 +99,28 @@ namespace DevAttic.ConfigCrypter.Extensions
 
         private static void InitializeCertificateLoader(EncryptedJsonConfigSource config)
         {
-            if (!string.IsNullOrEmpty(config.CertificatePath))
+            if (config.Type == CryptType.Asymmetric)
             {
-                config.CertificateLoader = new FilesystemCertificateLoader(config.CertificatePath, config.CertificatePassword);
-            }
-            else if (!string.IsNullOrEmpty(config.CertificateSubjectName))
-            {
-                config.CertificateLoader = new StoreCertificateLoader(config.CertificateSubjectName);
-            }
-            else if (config.CertificateRawData?.Any() == true)
-            {
-                config.CertificateLoader =
-                    new RawDataCertificateLoader(config.CertificateRawData, config.CertificatePassword);
-            }
+                if (!string.IsNullOrEmpty(config.CertificatePath))
+                {
+                    config.CertificateLoader =
+                        new FilesystemCertificateLoader(config.CertificatePath, config.CertificatePassword);
+                }
+                else if (!string.IsNullOrEmpty(config.CertificateSubjectName))
+                {
+                    config.CertificateLoader = new StoreCertificateLoader(config.CertificateSubjectName);
+                }
+                else if (config.CertificateRawData?.Any() == true)
+                {
+                    config.CertificateLoader =
+                        new RawDataCertificateLoader(config.CertificateRawData, config.CertificatePassword);
+                }
 
-            if (config.CertificateLoader == null)
-            {
-                throw new InvalidOperationException(
-                    "Either CertificatePath or CertificateSubjectName or CertificateRawData has to be provided if CertificateLoader has not been set manually.");
+                if (config.CertificateLoader == null)
+                {
+                    throw new InvalidOperationException(
+                        "Either CertificatePath or CertificateSubjectName or CertificateRawData has to be provided if CertificateLoader has not been set manually.");
+                }
             }
 
             if (string.IsNullOrEmpty(config.Path))
