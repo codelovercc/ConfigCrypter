@@ -34,7 +34,8 @@ namespace DevAttic.ConfigCrypter.ConfigProviders.Json
             {
                 using (var crypter = _jsonConfigSource.CrypterFactory(_jsonConfigSource))
                 {
-                    Data = EncryptedJsonConfigurationFileParser.Parse(stream, crypter, _jsonConfigSource.KeysToDecrypt);
+                    Data = EncryptedJsonConfigurationFileParser.Parse(stream, crypter, _jsonConfigSource.KeysToDecrypt,
+                        _jsonConfigSource.KeyValueToDecryptPrefix);
                 }
             }
             catch (JsonException e)
@@ -62,11 +63,15 @@ namespace DevAttic.ConfigCrypter.ConfigProviders.Json
         private string _currentPath;
         private ICrypter _crypter;
         private List<string> _keysToDecrypt;
+        private string _keyValueToDecryptPrefix;
 
-        public static IDictionary<string, string> Parse(Stream input, ICrypter crypter, List<string> keysToDecrypt)
-            => new EncryptedJsonConfigurationFileParser().ParseStream(input, crypter, keysToDecrypt);
+        public static IDictionary<string, string> Parse(Stream input, ICrypter crypter, List<string> keysToDecrypt,
+            string keyValueToDecryptPrefix)
+            => new EncryptedJsonConfigurationFileParser().ParseStream(input, crypter, keysToDecrypt,
+                keyValueToDecryptPrefix);
 
-        private IDictionary<string, string> ParseStream(Stream input, ICrypter crypter, List<string> keysToDecrypt)
+        private IDictionary<string, string> ParseStream(Stream input, ICrypter crypter, List<string> keysToDecrypt,
+            string keyValueToDecryptPrefix)
         {
             _data.Clear();
 
@@ -86,6 +91,7 @@ namespace DevAttic.ConfigCrypter.ConfigProviders.Json
 
                 _crypter = crypter;
                 _keysToDecrypt = keysToDecrypt;
+                _keyValueToDecryptPrefix = keyValueToDecryptPrefix;
                 VisitElement(doc.RootElement);
             }
 
@@ -133,13 +139,19 @@ namespace DevAttic.ConfigCrypter.ConfigProviders.Json
                         throw new FormatException($"Error KeyIsDuplicated {key}");
                     }
 
-                    if (_keysToDecrypt.Contains(key))
+                    var vStr = value.ToString();
+                    if (vStr.StartsWith(_keyValueToDecryptPrefix))
                     {
-                        _data[key] = _crypter.DecryptString(value.ToString());
+                        vStr = vStr.Substring(_keyValueToDecryptPrefix.Length);
+                        _data[key] = _crypter.DecryptString(vStr);
+                    }
+                    else if (_keysToDecrypt.Contains(key))
+                    {
+                        _data[key] = _crypter.DecryptString(vStr);
                     }
                     else
                     {
-                        _data[key] = value.ToString();
+                        _data[key] = vStr;
                     }
 
                     break;

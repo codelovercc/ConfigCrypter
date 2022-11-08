@@ -23,6 +23,11 @@ namespace DevAttic.ConfigCrypter.ConfigProviders.Json
         public byte[] CertificateRawData { get; set; }
 
         /// <summary>
+        /// 在配置值中表示已经加密的前缀，带有该前缀的值将会被解密，该属性指示的要解密的值与<see cref="KeysToDecrypt"/>中设置的要解密的键的值都将会被解密
+        /// </summary>
+        public string KeyValueToDecryptPrefix { get; set; }
+
+        /// <summary>
         /// The fully qualified path of the certificate.
         /// </summary>
         public string CertificatePath { get; set; }
