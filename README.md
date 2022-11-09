@@ -8,8 +8,9 @@ The DevAttic ConfigCrypter makes it easy for you to encrypt and decrypt config f
 Encrypted configuration files will not make your server infrastructure unhackable. Usually the certificate to decrypt is hosted on the same server as your web application. This means an attacker could decrypt your config if your server is not secure and the attacker gains access.
 
 Additional security could be achieved by:
-- Storing your certficate in the windows certificate store (supported by ConfigCrypter) and restricting access to it.
+- Storing your certificate in the windows certificate store (supported by ConfigCrypter) and restricting access to it.
 - Protect your certificate with a password that is embedded in your source code (currently not supported, but could be easily implemented).
+- Don't storing your certificate in any where, ConfigCrypter now supports symmetric encrypt and RAS raw data, you can enter your key in the console or a web page(via https) to initialize ConfigCrypter when your app startup.
 
 Also these methods would not be perfectly safe. In fact it only makes things harder for an attacker.
 
@@ -91,6 +92,7 @@ public static IHostBuilder CreateHostBuilder(string[] args) =>
         {
             cfg.AddEncryptedAppSettings(crypter =>
             {
+                crypter.Type = CryptType.Asymmetric;
                 crypter.CertificatePath = "cert.pfx";
                 crypter.KeysToDecrypt = new List<string> { "Nested:KeyToEncrypt" };
             });
@@ -112,6 +114,7 @@ public static IHostBuilder CreateHostBuilder(string[] args) =>
         {
             cfg.AddEncryptedAppSettings(hostingContext.HostingEnvironment, crypter =>
             {
+                crypter.Type = CryptType.Asymmetric;
                 crypter.CertificatePath = "cert.pfx";
                 crypter.KeysToDecrypt = new List<string> { "Nested:KeyToEncrypt" };
             });
