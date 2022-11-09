@@ -59,7 +59,7 @@ namespace DevAttic.ConfigCrypter.Extensions
         }
 
         /// <summary>
-        /// Adds a provider to decrypt keys in the given json config file.
+        /// Adds a provider to decrypt keys in the given json config file. Using <see cref="EncryptedJsonConfigSource.Path"/> to specified the config file path.
         /// </summary>
         /// <param name="builder">A ConfigurationBuilder instance.</param>
         /// <param name="configAction">An action used to configure the configuration source.</param>
