@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration.Json;
 namespace DevAttic.ConfigCrypter.ConfigProviders.Json
 {
     /// <summary>
-    /// ConfigurationSource for encrypted JSON config files.
+    /// ConfigurationSource for encrypted JSON config files. ReloadOnChange default is true
     /// </summary>
     public class EncryptedJsonConfigSource : JsonConfigurationSource
     {
