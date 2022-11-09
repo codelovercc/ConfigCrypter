@@ -140,7 +140,7 @@ namespace DevAttic.ConfigCrypter.ConfigProviders.Json
                     }
 
                     var vStr = value.ToString();
-                    if (vStr.StartsWith(_keyValueToDecryptPrefix))
+                    if (!string.IsNullOrEmpty(_keyValueToDecryptPrefix) && vStr.StartsWith(_keyValueToDecryptPrefix))
                     {
                         vStr = vStr.Substring(_keyValueToDecryptPrefix.Length);
                         _data[key] = _crypter.DecryptString(vStr);
