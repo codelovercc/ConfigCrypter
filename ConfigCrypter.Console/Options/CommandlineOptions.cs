@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using System.Collections.Generic;
+using CommandLine;
 
 namespace ConfigCrypter.Console.Options
 {
@@ -7,14 +8,30 @@ namespace ConfigCrypter.Console.Options
         [Option('p', "path", Required = true, HelpText = "Path of the certificate.", Group = "CertLocation")]
         public string CertificatePath { get; set; }
 
-        [Option('n', "name", Required = true, HelpText = "The subject name of the certificate (CN). This can only be used in Windows environments.", Group = "CertLocation")]
+        [Option('n', "name", Required = true,
+            HelpText = "The subject name of the certificate (CN). This can only be used in Windows environments.",
+            Group = "CertLocation")]
         public string CertSubjectName { get; set; }
 
-        [Option('s', "password", Required = false, HelpText = "Password of the certificate (if available).", Default = null)]
+        [Option('s', "password", Required = false, HelpText = "Password of the certificate (if available).",
+            Default = null)]
         public string CertificatePassword { get; set; }
 
-        [Option('k', "key", Required = true, HelpText = "The key to encrypt in the config file.")]
+        [Option("secret-key", Required = true, HelpText = "Key for the symmetric encryption.", Group = "CertLocation")]
+        public string SecretKey { get; set; }
+
+        [Option("secret-iv", Required = false, HelpText = "Iv for the symmetric encryption.")]
+        public string SecretIv { get; set; }
+
+        [Option('k', "key", Group = "theKeys", Required = true, HelpText = "The key to encrypt in the config file, Json Path.")]
         public string Key { get; set; }
+
+        [Option('l', "keys", Group = "theKeys", Required = true, HelpText = "The keys to encrypt in the config file, Json Path.")]
+        public IEnumerable<string> Keys { get; set; }
+
+        [Option("key-prefix", Group = "theKeys", Required = true,
+            HelpText = "The prefix of the value of the keys to encrypt in the config file.")]
+        public string KeyPrefix { get; set; }
 
         [Option('f', "file", Required = true, HelpText = "The path to the config file.")]
         public string ConfigFile { get; set; }
