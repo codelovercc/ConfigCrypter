@@ -79,11 +79,11 @@ command and the original file will be replaced.
 To decrypt the file again you can simply execute:
 `config-crypter decrypt -p c:\path\to\cert.pfx -f c:\path\to\config_encrypted.json -k "Nested.KeyToEncrypt"`
 
-To encrypt our key for the entire file use symmetric encryption we simple execute DevAttic.ConfigCrypter.Console project with arguments:
+To encrypt our keys for the entire file use symmetric encryption we simple execute DevAttic.ConfigCrypter.Console project with arguments:
 `encrypt -f <path-to-the-file> --secret-key 123456 --secret-iv 123 --key-prefix <the-key-should-be-encrypted> -l <the-key-should-be-encrypted>`
 and the encrypted file will be created in same directory as same filename with `_encrypted` postfix.
 
-To decrypt our key for the entire file use symmetric encryption we simple execute DevAttic.ConfigCrypter.Console project with arguments:
+To decrypt our keys for the entire file use symmetric encryption we simple execute DevAttic.ConfigCrypter.Console project with arguments:
 `decrypt -f <path-to-the-file> --secret-key 123456 --secret-iv 123 --key-prefix <the-key-should-be-encrypted> -l <the-key-should-be-encrypted>`
 and the decrypted file will be created in same directory as same filename with `_decrypted` postfix.
 
