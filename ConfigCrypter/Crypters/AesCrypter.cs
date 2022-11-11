@@ -32,7 +32,7 @@ namespace DevAttic.ConfigCrypter.Crypters
             encryptedBytes[index] = bytes[index];
             index += Aes.IV.Length + 1;
             Array.Copy(bytes, index, encryptedBytes, 1, bytes.Length - index);
-            return base.Decrypt(bytes);
+            return base.Decrypt(encryptedBytes);
         }
     }
 }
