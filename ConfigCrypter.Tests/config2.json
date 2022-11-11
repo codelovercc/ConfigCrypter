@@ -1,0 +1,29 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Encrypted_Server=localhost;Database=Testing;Uid=root;Pwd=123123;CharSet=utf8;Pooling=True;AllowUserVariables=True;",
+    "RedisDistributedCache": "Encrypted_127.0.0.1:6379",
+    "RedisMultiplexer": "Encrypted_127.0.0.1:6379",
+    "RabbitConnectionString": "Encrypted_host=127.0.0.1:5672;virtualHost=/;username=guest;password=guest"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "JwtSettings": {
+    "SecurityKey": "SecurityKeyForJwt",
+    "ExpiresIn": "00:10:00",
+    "Issuer": "Jwt Issuer",
+    "EncryptKey": "EncryptKeyForJwt",
+    "RefreshTokenExpiresIn": "60.20:00:00"
+  },
+  "CultureOptions": {
+    "SupportedCultures": {
+      "0": "en-US",
+      "1": "zh-HK",
+      "2": "zh-CN"
+    }
+  },
+  "AllowedHosts": "*"
+}
