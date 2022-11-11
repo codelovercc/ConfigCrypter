@@ -134,3 +134,11 @@ To generate a certificate you could use the following commands:
 `openssl req -new -x509 -nodes -sha1 -days 365 -key private.key > public.cer`
 
 `openssl pkcs12 -export -in public.cer -inkey private.key -out cert.pfx`
+
+If there an error on MacOS when creating X509Certificate2, you need to add a password in your cert file, and use below commands to generate a
+certificate. first command will generate private key and pem cert, you need to enter the password of private key. second
+command will convert cert from pem to pfx, also you need to enter the password of private key and enter the new password
+of pfx certificate. see also https://github.com/dotnet/runtime/issues/18254#issuecomment-254602462 and https://github.com/dotnet/runtime/issues/23635
+
+`openssl req -x509 -newkey rsa:4096 -keyout testkey.pem -out testcert.pem`
+`openssl pkcs12 -export -out badfinal.pfx -inkey testkey.pem -in testcert.pem`

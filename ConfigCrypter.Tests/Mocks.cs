@@ -20,8 +20,10 @@ namespace DevAttic.ConfigCrypter.Tests
                     using var certStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("DevAttic.ConfigCrypter.Tests.test-certificate.pfx");
                     using var ms = new MemoryStream();
                     certStream!.CopyTo(ms);
-
-                    return new X509Certificate2(ms.ToArray());
+                    //When not on Windows OS will throw a exception of Interop+AppleCrypto+AppleCommonCryptoCryptographicException : MAC verification failed during PKCS12 import (wrong password?)
+                    //Check out here https://github.com/dotnet/runtime/issues/23635
+                    //You need add a password on .pfx file or use BouncyCastle to create a X509Certificate2 instance.
+                    return new X509Certificate2(ms.ToArray(), "123456");
                 });
 
                 return certLoaderMock;
