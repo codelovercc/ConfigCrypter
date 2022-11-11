@@ -11,7 +11,9 @@
   <ItemGroup>
     <None Remove="appsettings.json" />
     <None Remove="config.json" />
-    <None Remove="test-certificate.pfx" />
+    <None Update="config2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -21,10 +23,6 @@
     <Content Include="config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="test-certificate.pfx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,7 +40,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ConfigCrypter.Console\ConfigCrypter.Console.csproj" />
     <ProjectReference Include="..\ConfigCrypter\ConfigCrypter.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="test-certificate.pfx" />
+    <EmbeddedResource Include="test-certificate.pfx" />
   </ItemGroup>
 
 </Project>
