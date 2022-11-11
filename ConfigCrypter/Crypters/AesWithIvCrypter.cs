@@ -29,7 +29,7 @@ namespace DevAttic.ConfigCrypter.Crypters
         {
             Encoding = encoding ?? Encoding.UTF8;
             Aes = Aes.Create();
-            Aes.Mode = CipherMode.CFB;
+            Aes.Mode = CipherMode.CBC;
             Aes.Padding = PaddingMode.PKCS7;
             Aes.Key = FitKeyLength(Encoding.GetBytes(secretKey), KeySize256Bit);
             if (string.IsNullOrWhiteSpace(iv))
