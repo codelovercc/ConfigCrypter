@@ -198,7 +198,7 @@ If there an error on MacOS when creating X509Certificate2, you need to add a pas
 commands to generate a
 certificate. first command will generate private key and pem cert, you need to enter the password of private key. second
 command will convert cert from pem to pfx, also you need to enter the password of private key and enter the new password
-of pfx certificate. see also https://github.com/dotnet/runtime/issues/18254#issuecomment-254602462
+of pfx certificate. see also at https://github.com/dotnet/runtime/issues/18254#issuecomment-254602462
 and https://github.com/dotnet/runtime/issues/23635
 
 `openssl req -x509 -newkey rsa:4096 -keyout testkey.pem -out testcert.pem`
