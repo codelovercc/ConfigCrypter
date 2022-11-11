@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using DevAttic.ConfigCrypter.ConfigCrypters;
 
 namespace DevAttic.ConfigCrypter
@@ -20,6 +21,15 @@ namespace DevAttic.ConfigCrypter
         {
             _configCrypter = configCrypter;
             _options = options;
+        }
+
+        public void DecryptFile(string filePath, List<string> keys = null, string keyPrefix = null)
+        {
+            var configContent = File.ReadAllText(filePath);
+            var decryptedConfigContent = _configCrypter.DecryptKeys(configContent, keys, keyPrefix);
+
+            var targetFilePath = GetDestinationConfigPath(filePath, _options.DecryptedConfigPostfix);
+            File.WriteAllText(targetFilePath, decryptedConfigContent);
         }
 
         /// <summary>
@@ -51,6 +61,15 @@ namespace DevAttic.ConfigCrypter
         {
             var configContent = File.ReadAllText(filePath);
             var encryptedConfigContent = _configCrypter.EncryptKey(configContent, configKey);
+
+            var targetFilePath = GetDestinationConfigPath(filePath, _options.EncryptedConfigPostfix);
+            File.WriteAllText(targetFilePath, encryptedConfigContent);
+        }
+
+        public void EncryptFile(string filePath, List<string> keys = null, string keyPrefix = null)
+        {
+            var configContent = File.ReadAllText(filePath);
+            var encryptedConfigContent = _configCrypter.EncryptKeys(configContent, keys, keyPrefix);
 
             var targetFilePath = GetDestinationConfigPath(filePath, _options.EncryptedConfigPostfix);
             File.WriteAllText(targetFilePath, encryptedConfigContent);

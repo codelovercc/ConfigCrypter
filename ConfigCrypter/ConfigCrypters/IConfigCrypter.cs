@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DevAttic.ConfigCrypter.ConfigCrypters
 {
@@ -16,6 +17,8 @@ namespace DevAttic.ConfigCrypter.ConfigCrypters
         /// <remarks>It up to the implementer how to interpret the format of the config key.</remarks>
         string DecryptKey(string configFileContent, string configKey);
 
+        string DecryptKeys(string configFileContent, List<string> configKeys, string keyPrefix);
+
         /// <summary>
         /// Encrypts the key in the given content of a config file.
         /// </summary>
@@ -24,5 +27,7 @@ namespace DevAttic.ConfigCrypter.ConfigCrypters
         /// <returns>The content of the config file where the key has been encrypted.</returns>
         /// <remarks>It up to the implementer how to interpret the format of the config key.</remarks>
         string EncryptKey(string configFileContent, string configKey);
+
+        string EncryptKeys(string configFileContent, List<string> configKeys, string keyPrefix);
     }
 }

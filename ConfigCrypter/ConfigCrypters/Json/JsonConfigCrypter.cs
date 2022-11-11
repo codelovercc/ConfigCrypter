@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using DevAttic.ConfigCrypter.Crypters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -38,6 +40,33 @@ namespace DevAttic.ConfigCrypter.ConfigCrypters.Json
             return newConfigContent;
         }
 
+        public string DecryptKeys(string configFileContent, List<string> configKeys, string keyPrefix)
+        {
+            JObject parsedConfig = null;
+            if (configKeys?.Any() == true)
+            {
+                parsedConfig = EditConfig(JObject.Parse(configFileContent), configKeys, s => _crypter.DecryptString(s));
+            }
+
+            if (!string.IsNullOrEmpty(keyPrefix))
+            {
+                if (parsedConfig == null)
+                {
+                    parsedConfig = JObject.Parse(configFileContent);
+                }
+
+                parsedConfig = EditConfig(parsedConfig, keyPrefix,
+                    s => _crypter.DecryptString(s.Remove(0, keyPrefix.Length)));
+            }
+
+            if (parsedConfig == null)
+            {
+                throw new InvalidOperationException("List of keys and key prefix can not be both empty or null");
+            }
+
+            return parsedConfig.ToString(Formatting.Indented);
+        }
+
         public void Dispose()
         {
             Dispose(true);
@@ -59,6 +88,72 @@ namespace DevAttic.ConfigCrypter.ConfigCrypters.Json
             var newConfigContent = parsedConfig.ToString(Formatting.Indented);
 
             return newConfigContent;
+        }
+
+        public string EncryptKeys(string configFileContent, List<string> configKeys, string keyPrefix)
+        {
+            JObject parsedConfig = null;
+            if (configKeys?.Any() == true)
+            {
+                parsedConfig = EditConfig(JObject.Parse(configFileContent), configKeys, s => _crypter.EncryptString(s));
+            }
+
+            if (!string.IsNullOrEmpty(keyPrefix))
+            {
+                if (parsedConfig == null)
+                {
+                    parsedConfig = JObject.Parse(configFileContent);
+                }
+
+                parsedConfig = EditConfig(parsedConfig, keyPrefix,
+                    s => keyPrefix + _crypter.EncryptString(s.Remove(0, keyPrefix.Length)));
+            }
+
+            if (parsedConfig == null)
+            {
+                throw new InvalidOperationException("List of keys and key prefix can not be both empty or null");
+            }
+
+            return parsedConfig.ToString(Formatting.Indented);
+        }
+
+        private static JObject EditConfig(JObject parsedConfig, List<string> configKeys,
+            Func<string, string> valueEdit)
+        {
+            foreach (var configKey in configKeys)
+            {
+                var t = parsedConfig.SelectToken(configKey);
+                if (t == null)
+                {
+                    throw new InvalidOperationException($"The key {configKey} could not be found.");
+                }
+
+                var encryptedValue = valueEdit(t.Value<string>());
+                t.Replace(encryptedValue);
+            }
+
+            return parsedConfig;
+        }
+
+        private static JObject EditConfig(JObject parsedConfig, string keyPrefix, Func<string, string> valueEdit)
+        {
+            var tokens = parsedConfig.SelectTokens("$..*").Where(t => t is JValue).ToArray();
+            foreach (var token in tokens)
+            {
+                try
+                {
+                    var s = token.Value<string>();
+                    if (s.StartsWith(keyPrefix))
+                    {
+                        token.Replace(valueEdit(s));
+                    }
+                }
+                catch (InvalidCastException)
+                {
+                }
+            }
+
+            return parsedConfig;
         }
 
         protected virtual void Dispose(bool disposing)
