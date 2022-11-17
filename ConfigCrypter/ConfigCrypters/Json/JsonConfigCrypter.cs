@@ -40,7 +40,8 @@ namespace DevAttic.ConfigCrypter.ConfigCrypters.Json
             return newConfigContent;
         }
 
-        public string DecryptKeys(string configFileContent, List<string> configKeys, string keyPrefix)
+        public string DecryptKeys(string configFileContent, List<string> configKeys, string keyPrefix,
+            bool keepPrefix = false)
         {
             JObject parsedConfig = null;
             if (configKeys?.Any() == true)
@@ -56,7 +57,9 @@ namespace DevAttic.ConfigCrypter.ConfigCrypters.Json
                 }
 
                 parsedConfig = EditConfig(parsedConfig, keyPrefix,
-                    s => _crypter.DecryptString(s.Remove(0, keyPrefix.Length)));
+                    s => keepPrefix
+                        ? keyPrefix + _crypter.DecryptString(s.Remove(0, keyPrefix.Length))
+                        : _crypter.DecryptString(s.Remove(0, keyPrefix.Length)));
             }
 
             if (parsedConfig == null)
