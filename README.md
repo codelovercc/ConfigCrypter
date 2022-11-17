@@ -66,7 +66,7 @@ object you can leave it out here.
 
 To install the crypter [command line utility](https://www.nuget.org/packages/DevAttic.ConfigCrypter.Console/) just
 execute `dotnet tool install -g DevAttic.ConfigCrypter.Console`. After that you can use it with the
-command `config-crypter` from your command line.
+command `config-crypter` from your command line. Note: these feature are not supported by this tool command: symmetric encryption, changing encryption key, key-prefix and --keys option, encrypt/decrypt entire config file.
 
 To encrypt our key from above we simple execute:
 `config-crypter encrypt -p c:\path\to\cert.pfx -f c:\path\to\config.json -k "Nested.KeyToEncrypt"`.
