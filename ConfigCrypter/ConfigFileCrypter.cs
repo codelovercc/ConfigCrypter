@@ -23,6 +23,34 @@ namespace DevAttic.ConfigCrypter
             _options = options;
         }
 
+        /// <summary>
+        /// Use new IConfigCrypter re-encrypt the encrypted json config file, and override the file content with new encrypted content.
+        /// </summary>
+        /// <param name="encryptedFilePath">The encrypted json config file path</param>
+        /// <param name="configCrypter">The crypter with new secret key or certificate</param>
+        /// <param name="keys">The keys(JsonPath) in the json config file that about to encrypt or decrypt</param>
+        /// <param name="keyPrefix">The prefix of value that about to encrypt or decrypt</param>
+        public void ReEncryptFile(string encryptedFilePath, IConfigCrypter configCrypter, List<string> keys = null,
+            string keyPrefix = null)
+        {
+            var configContent = File.ReadAllText(encryptedFilePath);
+            var decryptedConfigContent = _configCrypter.DecryptKeys(configContent, keys, keyPrefix, true);
+            var encryptedConfigContent = configCrypter.EncryptKeys(decryptedConfigContent, keys, keyPrefix);
+
+            var targetFilePath = GetDestinationConfigPath(encryptedFilePath, _options.ChangedConfigPostFix);
+            File.WriteAllText(targetFilePath, encryptedConfigContent);
+        }
+
+        public void ReEncryptKeyInFile(string encryptedFilePath, IConfigCrypter configCrypter, string configKey)
+        {
+            var configContent = File.ReadAllText(encryptedFilePath);
+            var decryptedConfigContent = _configCrypter.DecryptKey(configContent, configKey);
+            var encryptedConfigContent = configCrypter.EncryptKey(decryptedConfigContent, configKey);
+
+            var targetFilePath = GetDestinationConfigPath(encryptedFilePath, _options.ChangedConfigPostFix);
+            File.WriteAllText(targetFilePath, encryptedConfigContent);
+        }
+
         public void DecryptFile(string filePath, List<string> keys = null, string keyPrefix = null)
         {
             var configContent = File.ReadAllText(filePath);
