@@ -17,7 +17,8 @@ namespace DevAttic.ConfigCrypter.ConfigCrypters
         /// <remarks>It up to the implementer how to interpret the format of the config key.</remarks>
         string DecryptKey(string configFileContent, string configKey);
 
-        string DecryptKeys(string configFileContent, List<string> configKeys, string keyPrefix);
+        string DecryptKeys(string configFileContent, List<string> configKeys, string keyPrefix,
+            bool keepPrefix = false);
 
         /// <summary>
         /// Encrypts the key in the given content of a config file.
