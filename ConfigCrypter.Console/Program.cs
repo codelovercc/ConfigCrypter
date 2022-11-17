@@ -12,7 +12,7 @@ namespace ConfigCrypter.Console
     {
         public static void Main(string[] args)
         {
-            Parser.Default.ParseArguments<EncryptOptions, DecryptOptions>(args)
+            Parser.Default.ParseArguments<EncryptOptions, DecryptOptions, ChangeEncryptionOptions>(args)
                 .WithParsed<EncryptOptions>(opts =>
                 {
                     var crypter = CreateCrypter(opts);
@@ -36,34 +36,56 @@ namespace ConfigCrypter.Console
                     {
                         crypter.DecryptFile(opts.ConfigFile, opts.Keys.ToList(), opts.KeyPrefix);
                     }
+                })
+                .WithParsed<ChangeEncryptionOptions>(options =>
+                {
+                    var crypter = CreateCrypter(options);
+                    if (!string.IsNullOrWhiteSpace(options.Key))
+                    {
+                        crypter.ReEncryptKeyInFile(options.ConfigFile,
+                            CreateConfigCrypter(options.SecretKeyNew, options.SecretIvNew, options.CertificatePathNew,
+                                options.CertificatePasswordNew, options.CertSubjectNameNew), options.Key);
+                    }
+                    else
+                    {
+                        crypter.ReEncryptFile(options.ConfigFile,
+                            CreateConfigCrypter(options.SecretKeyNew, options.SecretIvNew, options.CertificatePathNew,
+                                options.CertificatePasswordNew, options.CertSubjectNameNew), options.Keys.ToList(),
+                            options.KeyPrefix);
+                    }
                 });
+        }
+
+        private static JsonConfigCrypter CreateConfigCrypter(string secretKey, string secretIv, string certificatePath,
+            string certificatePassword, string certSubjectName)
+        {
+            if (!string.IsNullOrEmpty(secretKey))
+            {
+                var aesCrypter = string.IsNullOrEmpty(secretIv)
+                    ? new AesCrypter(secretKey)
+                    : new AesWithIvCrypter(secretKey, secretIv);
+                return new JsonConfigCrypter(aesCrypter);
+            }
+
+            ICertificateLoader certLoader = null;
+            if (!string.IsNullOrEmpty(certificatePath))
+            {
+                certLoader =
+                    new FilesystemCertificateLoader(certificatePath, certificatePassword);
+            }
+            else if (!string.IsNullOrEmpty(certSubjectName))
+            {
+                certLoader = new StoreCertificateLoader(certSubjectName);
+            }
+
+            var configCrypter = new JsonConfigCrypter(new RSACrypter(certLoader));
+            return configCrypter;
         }
 
         private static ConfigFileCrypter CreateCrypter(CommandlineOptions options)
         {
-            ICertificateLoader certLoader = null;
-
-            if (!string.IsNullOrEmpty(options.SecretKey))
-            {
-                var aesCrypter = string.IsNullOrEmpty(options.SecretIv)
-                    ? new AesCrypter(options.SecretKey)
-                    : new AesWithIvCrypter(options.SecretKey, options.SecretIv);
-                return new ConfigFileCrypter(new JsonConfigCrypter(aesCrypter), new ConfigFileCrypterOptions
-                {
-                    ReplaceCurrentConfig = options.Replace
-                });
-            }
-
-            if (!string.IsNullOrEmpty(options.CertificatePath))
-            {
-                certLoader = new FilesystemCertificateLoader(options.CertificatePath, options.CertificatePassword);
-            }
-            else if (!string.IsNullOrEmpty(options.CertSubjectName))
-            {
-                certLoader = new StoreCertificateLoader(options.CertSubjectName);
-            }
-
-            var configCrypter = new JsonConfigCrypter(new RSACrypter(certLoader));
+            var configCrypter = CreateConfigCrypter(options.SecretKey, options.SecretIv, options.CertificatePath,
+                options.CertificatePassword, options.CertSubjectName);
 
             var fileCrypter = new ConfigFileCrypter(configCrypter, new ConfigFileCrypterOptions()
             {
