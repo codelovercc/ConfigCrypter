@@ -9,7 +9,7 @@ namespace ConfigCrypter.Console.Options
         public string CertificatePathNew { get; set; }
 
         [Option("name-new", Required = true,
-            HelpText = "The subject name of the certificate (CN). This can only be used in Windows environments.",
+            HelpText = "The subject name of the new certificate (CN). This can only be used in Windows environments.",
             Group = "CertLocationNew")]
         public string CertSubjectNameNew { get; set; }
 
@@ -17,11 +17,11 @@ namespace ConfigCrypter.Console.Options
             Default = null)]
         public string CertificatePasswordNew { get; set; }
 
-        [Option("secret-key-new", Required = true, HelpText = "Key for the symmetric encryption for change encryption.",
+        [Option("secret-key-new", Required = true, HelpText = "New key for the symmetric encryption.",
             Group = "CertLocationNew")]
         public string SecretKeyNew { get; set; }
 
-        [Option("secret-iv-new", Required = false, HelpText = "Iv for the symmetric encryption for change encryption.")]
+        [Option("secret-iv-new", Required = false, Default = null, HelpText = "New iv for the symmetric encryption.")]
         public string SecretIvNew { get; set; }
     }
 }

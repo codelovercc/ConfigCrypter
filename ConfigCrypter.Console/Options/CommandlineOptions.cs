@@ -20,13 +20,15 @@ namespace ConfigCrypter.Console.Options
         [Option("secret-key", Required = true, HelpText = "Key for the symmetric encryption.", Group = "CertLocation")]
         public string SecretKey { get; set; }
 
-        [Option("secret-iv", Required = false, HelpText = "Iv for the symmetric encryption.")]
+        [Option("secret-iv", Required = false, Default = null, HelpText = "Iv for the symmetric encryption.")]
         public string SecretIv { get; set; }
 
-        [Option('k', "key", Group = "theKeys", Required = true, HelpText = "The key to encrypt in the config file, Json Path.")]
+        [Option('k', "key", Group = "theKeys", Required = true,
+            HelpText = "The key to encrypt in the config file, Json Path.")]
         public string Key { get; set; }
 
-        [Option('l', "keys", Group = "theKeys", Required = true, HelpText = "The keys to encrypt in the config file, Json Path.")]
+        [Option('l', "keys", Group = "theKeys", Required = true,
+            HelpText = "The keys to encrypt in the config file, Json Path.")]
         public IEnumerable<string> Keys { get; set; }
 
         [Option("key-prefix", Group = "theKeys", Required = true,
