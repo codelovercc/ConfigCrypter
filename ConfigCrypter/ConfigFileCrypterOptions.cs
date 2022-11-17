@@ -6,11 +6,12 @@
     public class ConfigFileCrypterOptions
     {
         /// <summary>
-        /// Name of the postfix that should be appended when a file has been decrypted and "ReplaceCurrentConfig" is set to true.
+        /// Name of the postfix that should be appended when a file has been decrypted and "ReplaceCurrentConfig" is set to false.
         /// </summary>
         public string DecryptedConfigPostfix { get; set; } = "_decrypted";
+
         /// <summary>
-        /// Name of the postfix that should be appended when a file has been encrypted and "ReplaceCurrentConfig" is set to true.
+        /// Name of the postfix that should be appended when a file has been encrypted and "ReplaceCurrentConfig" is set to false.
         /// </summary>
         public string EncryptedConfigPostfix { get; set; } = "_encrypted";
         /// <summary>
