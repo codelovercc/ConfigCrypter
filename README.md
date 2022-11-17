@@ -91,6 +91,13 @@ project with arguments:
 and the decrypted file will be created in same directory as same filename with `_decrypted` postfix. the `--secret-iv`
 option is optional, the decryption will be ok when the `--secret-iv` is generated.
 
+To change the secret key/iv of the encrypted config file, we simple execute DevAttic.ConfigCrypter.Console
+project with arguments:
+
+`change -f <path-to-the-encrypted-config-file> --secret-key <old-secret-key> --secret-iv <old-iv-if-required> --secret-key-new <new-srcret-key-to-change> --key-prefix <the-key-should-be-encrypted> -l <the-key-should-be-encrypted>`
+
+and the re-encrypted file will be created in same directory as same filename with `_changed` postfix.
+
 As above operations, you can copy your result files into your project to be used.
 
 ## Command line arguments
@@ -99,6 +106,7 @@ The following command line arguments can be passed for the encrypt and decrypt c
 
 ```
 -p, --path       (Group: CertLocation) Path of the certificate.
+--password       Password of the certificate (if available).
 -n, --name       (Group: CertLocation) The subject name of the certificate (CN). This can only be used in Windows environments.
 -k, --key        (Group: theKeys) The key to encrypt in the config file.
 -l, --keys       (Group: theKeys) The keys to encrypt in the config file.
@@ -110,6 +118,13 @@ The following command line arguments can be passed for the encrypt and decrypt c
 --version        Display version information.
 --secret-key     (Group: CertLocation) Key for the symmetric encryption.
 --secret-iv      Iv for the symmetric encryption.
+
+for changing the secret key or certificate of the encrypted config file.
+--path-new       (Group: CertLocationNew) Path of the new certificate.
+--name-new       (Group: CertLocationNew) The subject name of the new certificate (CN). This can only be used in Windows environments.
+--password-new   Password of the new certificate (if available).
+--secret-key-new (Group: CertLocationNew) New key for the symmetric encryption.
+--secret-iv-new  New Iv for the symmetric encryption.
 
 ```
 
