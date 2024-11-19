@@ -146,7 +146,7 @@ namespace DevAttic.ConfigCrypter.ConfigCrypters.Json
                 try
                 {
                     var s = token.Value<string>();
-                    if (s.StartsWith(keyPrefix))
+                    if (s != null && s.StartsWith(keyPrefix))
                     {
                         token.Replace(valueEdit(s));
                     }
