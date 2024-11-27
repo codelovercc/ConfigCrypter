@@ -12,6 +12,7 @@ namespace DevAttic.ConfigCrypter.ConfigCrypters.Json
     /// </summary>
     public class JsonConfigCrypter : IConfigCrypter
     {
+        private const string EncryptedVerifyKey = "encryptedVerify";
         private readonly ICrypter _crypter;
 
         /// <summary>
@@ -67,6 +68,8 @@ namespace DevAttic.ConfigCrypter.ConfigCrypters.Json
                 throw new InvalidOperationException("List of keys and key prefix can not be both empty or null");
             }
 
+            parsedConfig.Remove(EncryptedVerifyKey);
+
             return parsedConfig.ToString(Formatting.Indented);
         }
 
@@ -116,6 +119,8 @@ namespace DevAttic.ConfigCrypter.ConfigCrypters.Json
             {
                 throw new InvalidOperationException("List of keys and key prefix can not be both empty or null");
             }
+
+            parsedConfig[EncryptedVerifyKey] = _crypter.EncryptString(Guid.NewGuid().ToString());
 
             return parsedConfig.ToString(Formatting.Indented);
         }
