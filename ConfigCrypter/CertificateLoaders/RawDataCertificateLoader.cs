@@ -16,8 +16,8 @@ namespace DevAttic.ConfigCrypter.CertificateLoaders
         public X509Certificate2 LoadCertificate()
         {
             return string.IsNullOrEmpty(_password)
-                ? new X509Certificate2(_rawData)
-                : new X509Certificate2(_rawData, _password);
+                ? X509CertificateLoader.LoadCertificate(_rawData)
+                : X509CertificateLoader.LoadPkcs12(_rawData, _password);
         }
     }
 }
